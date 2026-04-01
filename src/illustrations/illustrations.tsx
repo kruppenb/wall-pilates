@@ -265,8 +265,36 @@ export function WallAngel({ className, size = 240 }: Props) {
   );
 }
 
-// Map exercise IDs to illustration components
-export const ILLUSTRATIONS: Record<string, React.ComponentType<Props>> = {
+// Generated image filenames (served from public/illustrations/)
+const GENERATED_IMAGES: Record<string, string> = {
+  'supported-rolldown': 'supported-rolldown.jpg',
+  'wall-leg-swing': 'wall-leg-swing.jpg',
+  'side-leg-swing': 'side-leg-swing.jpg',
+  'wall-crunch': 'wall-crunch.jpg',
+  'wall-sit': 'wall-sit.jpg',
+  'unilateral-wall-slides': 'unilateral-wall-slides.jpg',
+  'active-calf-stretch': 'active-calf-stretch.jpg',
+  'wall-angel': 'wall-angel.jpg',
+};
+
+function makeImageComponent(filename: string, alt: string) {
+  return function GeneratedIllustration({ className, size = 240 }: Props) {
+    const src = `${import.meta.env.BASE_URL}illustrations/${filename}`;
+    return (
+      <img
+        src={src}
+        alt={alt}
+        className={className}
+        width={size}
+        height={size}
+        style={{ objectFit: 'contain', borderRadius: 12 }}
+      />
+    );
+  };
+}
+
+// SVG fallbacks (kept for exercises without generated images)
+const SVG_ILLUSTRATIONS: Record<string, React.ComponentType<Props>> = {
   'supported-rolldown': SupportedRolldown,
   'wall-leg-swing': WallLegSwing,
   'side-leg-swing': SideLegSwing,
@@ -276,3 +304,15 @@ export const ILLUSTRATIONS: Record<string, React.ComponentType<Props>> = {
   'active-calf-stretch': ActiveCalfStretch,
   'wall-angel': WallAngel,
 };
+
+// Map exercise IDs to illustration components (prefer generated images)
+export const ILLUSTRATIONS: Record<string, React.ComponentType<Props>> = Object.fromEntries(
+  Object.entries(SVG_ILLUSTRATIONS).map(([id, SvgComponent]) => {
+    const filename = GENERATED_IMAGES[id];
+    if (filename) {
+      const name = id.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ');
+      return [id, makeImageComponent(filename, `Person doing ${name}`)];
+    }
+    return [id, SvgComponent];
+  })
+);

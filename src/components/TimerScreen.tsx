@@ -21,6 +21,7 @@ export function TimerScreen({ programDay, onComplete, onClose }: Props) {
   const Illustration = currentExercise ? ILLUSTRATIONS[currentExercise.exerciseId] : null;
   const nextExercise = programDay.exercises[timer.exerciseIndex + 1];
   const nextExerciseName = nextExercise ? EXERCISES[nextExercise.exerciseId]?.name : null;
+  const NextIllustration = nextExercise ? ILLUSTRATIONS[nextExercise.exerciseId] : null;
 
   const totalSeconds = (() => {
     if (timer.phase === 'countdown') return 3;
@@ -84,7 +85,10 @@ export function TimerScreen({ programDay, onComplete, onClose }: Props) {
           <p className="timer-screen-label">Rest</p>
           <CircularProgress seconds={timer.secondsRemaining} totalSeconds={10} size={160} />
           {nextExerciseName && (
-            <p className="timer-screen-next">Next: {nextExerciseName}</p>
+            <>
+              <p className="timer-screen-next">Next: {nextExerciseName}</p>
+              {NextIllustration && <NextIllustration size={100} />}
+            </>
           )}
         </div>
       )}
