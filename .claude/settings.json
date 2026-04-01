@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -c \"\nimport sys, json, re\nd = json.load(sys.stdin)\ncmd = d['tool_input']['command']\nif re.search(r'git\\s+(commit|push)', cmd):\n    print(json.dumps({'hookSpecificOutput':{'hookEventName':'PreToolUse','additionalContext':'STOP: Before committing or pushing, test the app with Playwright MCP. 1) Start dev server: npx vite --port 5174 & 2) Navigate to http://localhost:5174 3) Verify page loads, no console errors, day navigation works, exercise detail opens, timer works, progress view renders 4) Test mobile viewport (375x812) 5) Run npm run build. Only proceed after all checks pass.'}}))\n\"",
+            "timeout": 5,
+            "statusMessage": "Checking for git commit/push..."
+          }
+        ]
+      }
+    ]
+  }
+}
